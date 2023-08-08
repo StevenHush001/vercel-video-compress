@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Processing</title>
+</head>
+<body>
+    <h1>Video Processing</h1>
+    <form method="POST" action="/" enctype="multipart/form-data">
+        <input type="text" name="input_file_url" placeholder="Input File URL">
+        <input type="text" name="name" placeholder="Output File Name">
+        <button type="submit">Process Video</button>
+    </form>
+    
+    {% if input_size_mb is not none %}
+    <p>Input video size: {{ input_size_mb }} MB</p>
+    {% endif %}
+    
+    {% if output_size_mb is not none %}
+    <p>Output video size: {{ output_size_mb }} MB</p>
+    {% endif %}
+</body>
+</html>
