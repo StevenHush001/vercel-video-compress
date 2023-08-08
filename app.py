@@ -7,13 +7,15 @@ app = Flask(__name__)
 
 researchData = []
 
+
 def get_video_size(url):
     if "http" in url:
         response = requests.head(url, allow_redirects=True)
         return int(response.headers.get("Content-Length", 0))
     else:
         return os.path.getsize(url)
-    
+
+
 def reduce_video_file_size_with_sharpen(output_file, input_file, crf, yadif):
     try:
         subprocess.run(
@@ -37,20 +39,20 @@ def reduce_video_file_size_with_sharpen(output_file, input_file, crf, yadif):
                 output_file,
             ]
         )
-        
+
         original_size_mb = get_video_size(input_file) / (1024 * 1024)
         video_size_mb = get_video_size(output_file) / (1024 * 1024)
 
         return {
             "input_size_mb": original_size_mb,
             "output_size_mb": video_size_mb,
-            "success": True
+            "success": True,
         }
 
     except Exception as e:
         return {
             "error": f"Error reducing video file size with sharpening: {e}",
-            "success": False
+            "success": False,
         }
 
 
@@ -71,14 +73,15 @@ def reduce_video_file_size_with_sharpen(output_file, input_file, crf, yadif):
 
 #     return render_template("index.html")
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route("/", methods=["GET", "POST"])
 def index():
     input_size_mb = None
     output_size_mb = None
 
-    if request.method == 'POST':
-        input_file_url = request.form['input_file_url']
-        name = request.form['name']
+    if request.method == "POST":
+        input_file_url = request.form["input_file_url"]
+        name = request.form["name"]
 
         result = reduce_video_file_size_with_sharpen(
             f"output/{name}.mp4", input_file_url, 32.5, 2
@@ -91,8 +94,10 @@ def index():
             processed_video = f"output/{name}.mp4"
             return send_file(processed_video, as_attachment=True)
 
-    return render_template('index.html', input_size_mb=input_size_mb, output_size_mb=output_size_mb)
+    return render_template(
+        "index.html", input_size_mb=input_size_mb, output_size_mb=output_size_mb
+    )
 
 
 if __name__ == "__main__":
-     app.run(debug=False, host='0.0.0.0', port=os.environ.get('PORT', 5000))
+    app.run(debug=True, host="0.0.0.0", port=os.environ.get("PORT", 5000))
